@@ -1,7 +1,7 @@
 ### declaring default subnets to use on autoscaling group and alb
 data "aws_subnets" "example" {
   filter {
-    name   = "vpc-id"
+    name = "vpc-id"
     #values = [data.aws_vpc.selected.id]
     values = [var.vpc_id]
   }
@@ -18,8 +18,8 @@ resource "aws_lb" "main" {
   load_balancer_type = "application"
 
   # Use default public subnets
-  subnets            = [for subnet in data.aws_subnet.example : subnet.id]
-  security_groups    = [var.alb_security_group_id]
+  subnets         = [for subnet in data.aws_subnet.example : subnet.id]
+  security_groups = [var.alb_security_group_id]
 
   tags = {
     Name = "app-alb"
@@ -28,22 +28,23 @@ resource "aws_lb" "main" {
 
 # listener for HTTPS with ACM certificate
 resource "aws_lb_listener" "main" {
-  load_balancer_arn  = aws_lb.main.arn
-  port               = 443
-  protocol           = "HTTPS"
-  ssl_policy         = "ELBSecurityPolicy-2016-08"
-  certificate_arn    = var.certificate_arn
+  load_balancer_arn = aws_lb.main.arn
+  port              = 443
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = var.certificate_arn
 
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.target_group_default.arn
   }
+  tags = var.tags
 }
 
 resource "aws_lb_listener" "alb_listener" {
   load_balancer_arn = aws_lb.main.arn
-  port               = 80
-  protocol           = "HTTP"
+  port              = 80
+  protocol          = "HTTP"
 
   default_action {
     type = "redirect"
@@ -54,6 +55,7 @@ resource "aws_lb_listener" "alb_listener" {
       status_code = "HTTP_301"
     }
   }
+  tags = var.tags
 }
 
 
@@ -63,14 +65,15 @@ resource "aws_lb_target_group" "target_group_default" {
   port     = 80
   protocol = "HTTP"
   vpc_id   = var.vpc_id
+  tags     = var.tags
 }
 
 # creates an auto scaling group
 resource "aws_autoscaling_group" "asg-default" {
-  name                 = "asg-default"
-  min_size             = 1
-  max_size             = 2
-  desired_capacity     = 2
+  name             = "asg-default"
+  min_size         = 1
+  max_size         = 2
+  desired_capacity = 2
 
   launch_template {
     id      = var.launch_template_id

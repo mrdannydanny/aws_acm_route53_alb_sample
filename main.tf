@@ -6,6 +6,7 @@ module "acm" {
   source      = "./modules/acm"
   domain_name = var.domain_name
   domain_fqdn = module.route53.domain_fqdn
+  tags        = var.tags
 }
 
 module "route53" {
@@ -14,6 +15,7 @@ module "route53" {
   domain_validation_options_array = module.acm.aws_acm_certificate
   aws_lb_zone_dns_name            = module.alb.aws_lb_zone_dns_name
   aws_lb_zone_id                  = module.alb.aws_lb_zone_id
+  tags                            = var.tags
 }
 
 # wait the certificate to change its status to "Issued"
@@ -28,15 +30,17 @@ resource "null_resource" "wait_for_certificate" {
 }
 
 module "security_groups" {
-  source = "./modules/security_groups"
+  source         = "./modules/security_groups"
   default_vpc_id = module.default_vpc.default_vpc_id
-  depends_on = [null_resource.wait_for_certificate]
+  depends_on     = [null_resource.wait_for_certificate]
+  tags           = var.tags
 }
 
 module "launch_templates" {
-  source = "./modules/launch_templates"
+  source                            = "./modules/launch_templates"
   launch_template_security_group_id = module.security_groups.launch_template_security_group_id
-  depends_on = [null_resource.wait_for_certificate]
+  depends_on                        = [null_resource.wait_for_certificate]
+  tags                              = var.tags
 }
 
 module "alb" {
@@ -45,6 +49,7 @@ module "alb" {
   vpc_id                = module.default_vpc.default_vpc_id
   alb_security_group_id = module.security_groups.alb_sg_id
   launch_template_id    = module.launch_templates.launch_template_id
-  
+  tags                  = var.tags
+
 }
 

@@ -5,3 +5,7 @@ variable "domain_name" {
 variable "domain_fqdn" {
   type = string
 }
+
+variable "tags" {
+  type = map(string)
+}

@@ -1,5 +1,5 @@
 variable "certificate_arn" {
- type = string 
+  type = string
 }
 
 variable "alb_security_group_id" {
@@ -7,9 +7,13 @@ variable "alb_security_group_id" {
 }
 
 variable "vpc_id" {
- type = string 
+  type = string
 }
 
 variable "launch_template_id" {
   type = string
+}
+
+variable "tags" {
+  type = map(string)
 }

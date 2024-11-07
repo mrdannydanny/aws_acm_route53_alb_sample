@@ -3,7 +3,7 @@ variable "domain_name" {
 }
 
 variable "domain_validation_options_array" {
- type = list 
+  type = list(any)
 }
 
 variable "aws_lb_zone_id" {
@@ -12,4 +12,8 @@ variable "aws_lb_zone_id" {
 
 variable "aws_lb_zone_dns_name" {
   type = string
+}
+
+variable "tags" {
+  type = map(string)
 }
