@@ -14,6 +14,15 @@ variable "launch_template_id" {
   type = string
 }
 
+variable "bucket" {
+  type = string
+}
+
+variable "bucket_prefix" {
+  type = string
+}
+
+
 variable "tags" {
   type = map(string)
 }

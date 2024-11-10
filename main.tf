@@ -43,13 +43,19 @@ module "launch_templates" {
   tags                              = var.tags
 }
 
+module "s3_buckets" {
+  source = "./modules/s3_buckets"
+  tags                              = var.tags
+}
+
 module "alb" {
   source                = "./modules/alb"
   certificate_arn       = module.acm.aws_acm_arn
   vpc_id                = module.default_vpc.default_vpc_id
   alb_security_group_id = module.security_groups.alb_sg_id
   launch_template_id    = module.launch_templates.launch_template_id
+  bucket                = module.s3_buckets.s3_main_alb_logs_id # s3 where alb logs will be stored
+  bucket_prefix         = "main-lb"                             # helps identifying in case multiple lbs exist
   tags                  = var.tags
-
 }
 
