@@ -46,6 +46,7 @@ module "launch_templates" {
 module "s3_buckets" {
   source = "./modules/s3_buckets"
   tags                              = var.tags
+  bucket_prefix                     = "main-lb"  
 }
 
 module "alb" {
@@ -58,4 +59,3 @@ module "alb" {
   bucket_prefix         = "main-lb"                             # helps identifying in case multiple lbs exist
   tags                  = var.tags
 }
-

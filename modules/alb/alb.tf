@@ -24,7 +24,7 @@ resource "aws_lb" "main" {
   access_logs {
     bucket  = var.bucket
     prefix  = var.bucket_prefix
-    enabled = false # fix later
+    enabled = true
   }
 
   tags = var.tags
